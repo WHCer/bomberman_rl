@@ -3,19 +3,26 @@ from collections import namedtuple
 import pygame
 from pygame.locals import *
 import logging
-
-
+phase = 'fight' # 'fightraw',use the default reward to train
+phase_to_crate_density={
+    'coins':0.0,
+    'crates25':0.25,
+    'crates50':0.5,
+    'crates75':0.75,
+    'fight':0.75,
+    'fightraw':0.75,
+}
 settings = {
     # Display
     'width': 1000,
     'height': 600,
-    'gui': True,
-    'fps': 15,
+    'gui': False,
+    'fps': 20,
 
     # Main loop
     'update_interval': 0.1, # 0.33,
     'turn_based': False,
-    'n_rounds': 10,
+    'n_rounds': 100,
     'save_replay': False,
     'make_video_from_replay': False,
 
@@ -23,7 +30,8 @@ settings = {
     'cols': 17,
     'rows': 17,
     'grid_size': 30,
-    'crate_density': 0.75,
+    'phase':phase,
+    'crate_density': phase_to_crate_density[phase],
     'actions': ['UP', 'DOWN', 'LEFT', 'RIGHT', 'BOMB', 'WAIT'],
     'max_agents': 4,
     'max_steps': 400,
@@ -33,7 +41,7 @@ settings = {
     'explosion_timer': 2,
 
     # Rules for agents
-    'timeout': 5.0,
+    'timeout': 0.5,
     'reward_kill': 5,
     'reward_coin': 1,
     'reward_slow': -1,
@@ -49,13 +57,12 @@ settings = {
     },
 
     # Logging levels
-    'log_game': logging.INFO,
+    'log_game': logging.ERROR,
     'log_agent_wrapper': logging.INFO,
-    'log_agent_code': logging.DEBUG,
+    'log_agent_code': logging.INFO,
 }
 settings['grid_offset'] = [(settings['height'] - settings['rows']*settings['grid_size'])//2] * 2
 s = namedtuple("Settings", settings.keys())(*settings.values())
-
 
 events = [
     'MOVED_LEFT',
